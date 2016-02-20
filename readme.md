@@ -45,3 +45,57 @@ after_merge() - called after merging the default data and the data passed from t
 before_merge() - called before merging the default data and the data passed from the controller.
 
 These are useful when you like to update the rules after certain data is met.
+
+## Queuing
+
+```
+
+<?php 
+
+namespace App\JRequests\Handlers\User;
+
+use App\Services\AbstractService;
+use App\User;
+use App\Jobs\UserCreatedJob;
+
+class Create extends AbstractRequest
+{
+
+    /**
+     * @var array
+     */
+    protected $rules = [
+        'first_name' => 'required',
+        'last_name'  => 'required',
+        'email'      => 'required|email|unique:users,email'
+    ];
+
+    /**
+     * @var array
+     */
+    protected $messages = [
+        'first_name.required' => 'Hey first name is needed.',
+        'last_name.required'  => 'Hey last name is needed.',
+        'email.required'      => 'Foo!!!',
+        'email.email'         => 'Bar!!!'
+        'email.unique'        => 'Oink!!!'
+    ];
+    /**
+     * Default values
+     * @var array
+     */
+    protected $data = [
+        'last_name' => 'Indong'
+    ];
+    /**
+     * This is where you handle the request after validation
+     * @return void|mixed
+     */
+    public function handle() {
+        $user = new User($this->data);
+        $user->save();
+        $this->dispatch(new UserCreatedJob($user));
+        return $this->resolve($user);
+    }
+}
+```
