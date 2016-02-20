@@ -99,3 +99,20 @@ class Create extends AbstractRequest
     }
 }
 ```
+
+## Sample Response
+
+```
+{
+    "status": "failure",
+    "code": 400,
+    "message": {
+        "email": [
+            "The email field is required."
+        ],
+        "password": [
+            "The password field is required."
+        ]
+    }
+}
+```
